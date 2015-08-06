@@ -6,16 +6,44 @@ import unittest
 
 # from mock import MagicMock
 import sh
+import codecs
 
 from gitenberg.book import Book
 from gitenberg.fetch import BookFetcher
 from gitenberg.util.catalog import BookMetadata
 from gitenberg.make import LocalRepo
 from gitenberg.make import NewFilesHandler
+from gitenberg.readme import Readme
 
 
 def null():
     pass
+
+class TestReadme(unittest.TestCase):
+
+    def setUp(self):
+        self.true_yaml_path = 'gitenberg/test_data'
+        with codecs.open('gitenberg/test_data/README_GOLD.rst', 'r') as iFile:
+            self.gold_readme = iFile.read()
+
+    #make sure bad paths fail correctly for Readme Class 
+    def test_false_path(self):
+        with self.assertRaises(IOError):
+            rm = Readme("this/is/a/bad/path")
+    
+    #make sure metadata is read correctly
+    def test_true_path(self):
+        rm = Readme(self.true_yaml_path)
+        self.assertIsInstance(rm.metadata, dict)
+
+    def test_readme(self):
+        rm = Readme(self.true_yaml_path)
+        rm.createReadme()
+
+        with codecs.open('gitenberg/test_data/README.rst', 'r') as iFile:
+            test_readme = iFile.read()
+
+        self.assertEqual(self.gold_readme, test_readme)
 
 class TestBookPath(unittest.TestCase):
 

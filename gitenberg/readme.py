@@ -13,13 +13,11 @@ def readme(book_repo):
 
 	if isinstance(book_repo, Book):
 		readme_maker = Readme(book_repo.local_path) #use the formatting in book class
-		message = readme_maker.createReadme()
-		logging.debug(message)
+		readme_maker.createReadme()
 
 	else:
 		readme_maker = Readme(book_repo)
-		message = readme_maker.createReadme()
-		logging.info(message)
+		readme_maker.createReadme()
 
 
 class Readme(object):
