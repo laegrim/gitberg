@@ -2,18 +2,22 @@
 # -*- coding: utf-8 -*-
 """
 Usage:
-    gitbook clone <book_repo_name>
+    gitbook clone <book_repo_name> [options]
     gitbook (fetch | make | push) <book_id> [options]
     gitbook get <book_id> [options]
     gitbook update [options]
     gitbook report <book_identity>
     gitbook all BOOKID BOOKIDEND [options]
+    gitbook readme (id|path) <identifier> [options]
 
 Arguments:
     <book_repo_name> - The name of a repo in Gitenberg, `Frankenstein_84`
+    <book_id> - The unique identifier of a book in Project Gutenberg
+    <identifier> - Specifies either a Project Gutenberg id or a path for repo name
 
 Options:
-    -v --logging (debug | info | error)
+    -v                                  sets the logging level to DEBUG
+    --logging (debug | info | error)    set the logging level
     --rdf_library <rdr_library>         where are you storing rdf files
 """
 import logging
@@ -23,6 +27,7 @@ from docopt import docopt
 
 from gitenberg import Book
 from gitenberg import clone
+from gitenberg import readme
 from gitenberg import __version__
 
 
@@ -58,7 +63,7 @@ if __name__ == '__main__':
 
     arguments = docopt(__doc__, version=__version__)
 
-    if '--logging' in arguments:
+    if arguments['--logging'] is not None:
         log_level = arguments['--logging']
         if log_level == 'debug':
             logger.setLevel(logging.DEBUG)
@@ -72,7 +77,7 @@ if __name__ == '__main__':
 
     if arguments['<book_id>'] is not None:
         book = Book(arguments['<book_id>'])
-        if '--rdf_library' in arguments:
+        if arguments['--rdf_library'] is not None:
             rdf_library = arguments['--rdf_library']
             book.parse_book_metadata(rdf_library)
         else:
@@ -110,3 +115,16 @@ if __name__ == '__main__':
                 clone(repo_name.strip('\n'))
 
         clone(arg_book_name)
+
+    elif arguments['readme']:
+
+        identifier = arguments['<identifier>'] #repo name
+
+        if arguments['id']: #repo name is an Project Gutenberg id number
+            book = Book(identifier) #use the built in pathing funtions in book to find it
+            logging.info("creating new readme.txt from repository: {0}".format(identifier))
+            readme(book)
+
+        elif arguments['path']: #repo name is repo name
+            logging.info("creating new readme.txt from repository: {0}".format(identifier))
+            readme(identifier)

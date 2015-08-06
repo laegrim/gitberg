@@ -16,6 +16,9 @@ logs/*
 *.pyc
 *.db
 
+#Ignore Ipython Notebooks
+*.ipynb
+
 # IDE vim ignore files
 *.swp
 *.ropeproject

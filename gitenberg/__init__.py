@@ -5,6 +5,7 @@
 
 from .book import Book
 from .clone import clone
+from .readme import readme
 
 __title__ = 'gitenberg'
 __version__ = '0.0.9'
